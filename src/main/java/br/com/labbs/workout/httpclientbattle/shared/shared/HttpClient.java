@@ -1,4 +1,4 @@
-package br.com.br.com.labbs.workout.httpclientbattle.shared;
+package br.com.labbs.workout.httpclientbattle.shared.shared;
 
 import io.opentracing.propagation.TextMap;
 
