@@ -6,7 +6,7 @@
 
     <groupId>br.com.labbs.workout</groupId>
     <artifactId>http-client-battle_shared</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.4</version>
 
     <dependencies>
 
