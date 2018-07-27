@@ -11,25 +11,24 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public interface HttpClient {
 
-    int execRequest(Object request, int requestNumber);
     String getClientName();
-    void addHeaderToRequest(Object request, String key, String value);
     Object newRequest();
-
-    int getResponseStatusCode();
+    void addHeaderToRequest(Object request, String key, String value);
+    Object execRequest(Object request, int requestNumber);
+    int getResponseStatusCode(Object response);
 
     default int doRequest(int requestNumber) {
         try(final Scope scope = Tracing.get().buildSpan(this.getClientName()).withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT).startActive(true)) {
             Object request = this.newRequest();
             Tracing.get().inject(scope.span().context(), Format.Builtin.HTTP_HEADERS, this.jaegerHeaderInjector(request));
 
-            this.execRequest(request, requestNumber);
+            Object response = this.execRequest(request, requestNumber);
 
             scope.span().setTag("client_type", getClientName());
             scope.span().setTag("request_number", requestNumber);
-            scope.span().setTag("status_code", getResponseStatusCode());
-            scope.span().log(""+getResponseStatusCode());
-            return getResponseStatusCode();
+            scope.span().setTag("status_code", getResponseStatusCode(response));
+            scope.span().log(""+getResponseStatusCode(response));
+            return getResponseStatusCode(response);
         } catch (Throwable e) {
             e.printStackTrace();
             return 500;
