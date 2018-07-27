@@ -14,7 +14,7 @@ public interface HttpClient {
     String getClientName();
     Object newRequest();
     void addHeaderToRequest(Object request, String key, String value);
-    Object execRequest(Object request, int requestNumber);
+    Object execRequest(Object request, int requestNumber) throws Exception;
     int getResponseStatusCode(Object response);
 
     default int doRequest(int requestNumber) {
