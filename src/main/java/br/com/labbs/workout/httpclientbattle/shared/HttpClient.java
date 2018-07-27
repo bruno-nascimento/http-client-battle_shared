@@ -9,20 +9,20 @@ import java.util.Iterator;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public interface HttpClient {
+public interface HttpClient<Request, Response, Client> {
 
     String getClientName();
-    Object newRequest();
-    void addHeaderToRequest(Object request, String key, String value);
-    Object execRequest(Object request, int requestNumber) throws Exception;
-    int getResponseStatusCode(Object response);
+    Request newRequest();
+    void addHeaderToRequest(Request request, String key, String value);
+    Response execRequest(Request request, int requestNumber) throws Exception;
+    int getResponseStatusCode(Response response);
 
     default int doRequest(int requestNumber) {
         try(final Scope scope = Tracing.get().buildSpan(this.getClientName()).withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT).startActive(true)) {
-            Object request = this.newRequest();
+            Request request = this.newRequest();
             Tracing.get().inject(scope.span().context(), Format.Builtin.HTTP_HEADERS, this.jaegerHeaderInjector(request));
 
-            Object response = this.execRequest(request, requestNumber);
+            Response response = this.execRequest(request, requestNumber);
 
             scope.span().setTag("client_type", getClientName());
             scope.span().setTag("request_number", requestNumber);
@@ -35,7 +35,7 @@ public interface HttpClient {
         }
     }
 
-    default TextMap jaegerHeaderInjector(final Object request) {
+    default TextMap jaegerHeaderInjector(final Request request) {
         return new TextMap() {
             @Override
             public Iterator<Map.Entry<String, String>> iterator() {
