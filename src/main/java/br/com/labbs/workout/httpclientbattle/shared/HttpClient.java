@@ -12,14 +12,14 @@ import java.util.Map;
 public interface HttpClient<Request, Response, Client> {
 
     String getClientName();
-    Request newRequest();
+    Request newRequest(String url);
     void addHeaderToRequest(Request request, String key, String value);
     Response execRequest(Request request, int requestNumber) throws Exception;
     int getResponseStatusCode(Response response);
 
     default int doRequest(int requestNumber) {
         try(final Scope scope = Tracing.get().buildSpan(this.getClientName()).withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT).startActive(true)) {
-            Request request = this.newRequest();
+            Request request = this.newRequest(Env.URL_SERVER.get());
             Tracing.get().inject(scope.span().context(), Format.Builtin.HTTP_HEADERS, this.jaegerHeaderInjector(request));
 
             Response response = this.execRequest(request, requestNumber);
