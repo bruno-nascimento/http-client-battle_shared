@@ -11,17 +11,19 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public interface HttpClient {
 
-    int hit(int requestNumber);
+    int execRequest(Object request, int requestNumber);
     String getClientName();
     void addHeaderToRequest(Object request, String key, String value);
-    Object getRequest();
+    Object newRequest();
+
     int getResponseStatusCode();
 
     default int doRequest(int requestNumber) {
         try(final Scope scope = Tracing.get().buildSpan(this.getClientName()).withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT).startActive(true)) {
-            Tracing.get().inject(scope.span().context(), Format.Builtin.HTTP_HEADERS, this.jaegerHeaderInjector(getRequest()));
+            Object request = this.newRequest();
+            Tracing.get().inject(scope.span().context(), Format.Builtin.HTTP_HEADERS, this.jaegerHeaderInjector(request));
 
-            this.hit(requestNumber);
+            this.execRequest(request, requestNumber);
 
             scope.span().setTag("client_type", getClientName());
             scope.span().setTag("request_number", requestNumber);
