@@ -4,7 +4,10 @@ import java.util.Map;
 
 public enum Env {
 
-    URL_SERVER;
+    URL_SERVER,
+    MAX_REQUEST_PER_MINUTE,
+    TEST_DURATION_SECONDS,
+    PROMETHEUS_PUSHGATEWAY;
 
     final Map<String, String> envVars = System.getenv();
 
