@@ -4,10 +4,16 @@ import java.util.Map;
 
 public enum Env {
 
-    URL_SERVER,
+    JAEGER_SERVICE_NAME,
+    JAEGER_AGENT_HOST,
     MAX_REQUEST_PER_MINUTE,
     TEST_DURATION_SECONDS,
-    PROMETHEUS_PUSHGATEWAY;
+    PROMETHEUS_PUSHGATEWAY,
+    URL_SERVER_PROTOCOL,
+    URL_SERVER_DOMAIN,
+    URL_SERVER_PORT,
+    URL_SERVER_PATH,
+    URL_SERVER;
 
     final Map<String, String> envVars = System.getenv();
 
