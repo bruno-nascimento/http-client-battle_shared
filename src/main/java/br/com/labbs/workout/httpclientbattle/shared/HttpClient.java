@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public interface HttpClient<Request, Response, Client> {
+public interface HttpClient<Request, Response> {
 
     String getClientName();
     Request newRequest(String url);
